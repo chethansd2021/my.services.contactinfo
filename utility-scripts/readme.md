@@ -1,0 +1,1 @@
+Utility scripts for common project operations, such as generating a PSQL migration or a Code FIrst Migration Script ofr the PSQL

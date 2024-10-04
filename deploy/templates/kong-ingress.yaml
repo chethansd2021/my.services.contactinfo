@@ -1,0 +1,8 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongIngress
+metadata:
+  name: change-timeout
+proxy:
+  protocol: http
+  read_timeout: 100000
+  write_timeout: 100000

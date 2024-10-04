@@ -1,0 +1,1 @@
+mvn test "-Dkarate.options" -Dtest=SmokeTestRunner

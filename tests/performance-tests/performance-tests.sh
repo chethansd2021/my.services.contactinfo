@@ -1,0 +1,1 @@
+mvn -B clean test-compile gatling:test

@@ -1,0 +1,40 @@
+{{- if .Values.newingress.enabled -}}
+{{- $fullName := include "fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
+{{- $path := .Values.newingress.path -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-newingress
+  labels:
+    {{- include "labels" . | nindent 4 }}
+  {{- with .Values.newingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName : {{ .Values.newingress.className}}
+  {{- if .Values.newingress.tls }}
+  tls:
+    {{- range .Values.newingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.newingress.hosts }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: {{ $path }}/
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ $fullName }}
+                port: 
+                  number: {{ $svcPort }}
+    {{- end }}
+  {{- end }}

@@ -1,0 +1,21 @@
+<div *ngIf="feedbackMessage" class="alert alert-success">
+    {{ feedbackMessage }}
+  </div>
+  
+  <app-contact-form
+    [contact]="selectedContact"
+    (formSubmit)="selectedContact ? onUpdateContact($event) : onAddContact($event)">
+  </app-contact-form>
+  
+  <hr>
+  
+  <ul class="list-group">
+    <li class="list-group-item" *ngFor="let contact of contacts">
+      <h5>{{ contact.name }}</h5>
+      <p>{{ contact.email }}</p>
+      <p>{{ contact.phone }}</p>
+      <button class="btn btn-warning" (click)="onEditContact(contact)">Edit</button>
+      <button class="btn btn-danger" (click)="onDeleteContact(contact.id)">Delete</button>
+    </li>
+  </ul>
+  
