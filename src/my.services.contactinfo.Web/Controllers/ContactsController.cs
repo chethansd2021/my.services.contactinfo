@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using my.services.contactinfo.Application.Services;
 using my.services.contactinfo.Domain.Models;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace my.services.contactinfo.Web.Controllers
@@ -12,70 +13,72 @@ namespace my.services.contactinfo.Web.Controllers
     public class ContactsController : ControllerBase
     {
         private readonly ContactService _contactService;
+        private readonly IValidator<Contact> _contactValidator;
 
-        public ContactsController(ContactService contactService)
+        public ContactsController(ContactService contactService, IValidator<Contact> contactValidator)
         {
             _contactService = contactService;
+            _contactValidator = contactValidator;
         }
 
+        // GET: api/contact
         [HttpGet]
-        public async Task<IActionResult> GetAllContactsAsync()
+        public async Task<ActionResult<List<Contact>>> GetContacts()
         {
             var contacts = await _contactService.GetAllContactsAsync();
             return Ok(contacts);
         }
 
+        // GET: api/contact/{id}
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetContactAsync(int id)
+        public async Task<ActionResult<Contact>> GetContact(int id)
         {
             var contact = await _contactService.GetContactByIdAsync(id);
             if (contact == null) return NotFound();
             return Ok(contact);
         }
 
+        // POST: api/contact
         [HttpPost]
-        public async Task<IActionResult> CreateContactAsync(Contact contact)
+        public async Task<ActionResult> AddContact([FromBody] Contact contact)
         {
-            try
+            var validationResult = await _contactValidator.ValidateAsync(contact);
+            if (!validationResult.IsValid)
             {
-                await _contactService.AddContactAsync(contact);
-                return CreatedAtAction(nameof(GetContactAsync), new { id = contact.Id }, contact);
+                return BadRequest(validationResult.Errors);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            await _contactService.AddContactAsync(contact);
+            return Ok();
         }
 
+        // PUT: api/contact/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateContactAsync(int id, Contact contact)
+        public async Task<ActionResult> UpdateContact(int id, [FromBody] Contact contact)
         {
-            if (id != contact.Id) return BadRequest("ID mismatch");
+            var existingContact = await _contactService.GetContactByIdAsync(id);
+            if (existingContact == null) return NotFound();
 
-            try
+            var validationResult = await _contactValidator.ValidateAsync(contact);
+            if (!validationResult.IsValid)
             {
-                await _contactService.UpdateContactAsync(contact);
-                return NoContent();
+                return BadRequest(validationResult.Errors);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            contact.Id = id;
+            await _contactService.UpdateContactAsync(contact);
+            return Ok();
         }
 
+        // DELETE: api/contact/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteContactAsync(int id)
+        public async Task<ActionResult> DeleteContact(int id)
         {
-            try
-            {
-                await _contactService.DeleteContactAsync(id);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var contact = await _contactService.GetContactByIdAsync(id);
+            if (contact == null) return NotFound();
+
+            await _contactService.DeleteContactAsync(id);
+            return Ok();
         }
     }
-
 }
