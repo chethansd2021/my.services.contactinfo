@@ -10,16 +10,13 @@ namespace my.services.contactinfo.Infrastructure.Respositories
 {
     public class ContactRepository : IContactRepository
     {
-        private readonly JsonFileDataAccess _dataAccess;
-
-        public ContactRepository()
-        {
-            _dataAccess = new JsonFileDataAccess("contacts.json");
-        }
+        private readonly string _filePath = "contacts.json";
 
         public async Task<List<Contact>> GetAllContactsAsync()
         {
-            return await _dataAccess.LoadContactsAsync();
+            if (!File.Exists(_filePath)) return new List<Contact>();
+            var jsonData = await File.ReadAllTextAsync(_filePath);
+            return JsonConvert.DeserializeObject<List<Contact>>(jsonData) ?? new List<Contact>();
         }
 
         public async Task<Contact> GetContactByIdAsync(int id)
@@ -28,23 +25,24 @@ namespace my.services.contactinfo.Infrastructure.Respositories
             return contacts.FirstOrDefault(c => c.Id == id);
         }
 
-        public async Task AddContactAsync(Contact newContact)
+        public async Task AddContactAsync(Contact contact)
         {
             var contacts = await GetAllContactsAsync();
-            contacts.Add(newContact);
-            await _dataAccess.SaveContactsAsync(contacts);
+            contact.Id = contacts.Any() ? contacts.Max(c => c.Id) + 1 : 1;
+            contacts.Add(contact);
+            await SaveAllContactsAsync(contacts);
         }
 
-        public async Task UpdateContactAsync(Contact updatedContact)
+        public async Task UpdateContactAsync(Contact contact)
         {
             var contacts = await GetAllContactsAsync();
-            var contact = contacts.FirstOrDefault(c => c.Id == updatedContact.Id);
-            if (contact != null)
+            var existingContact = contacts.FirstOrDefault(c => c.Id == contact.Id);
+            if (existingContact != null)
             {
-                contact.FirstName = updatedContact.FirstName;
-                contact.LastName = updatedContact.LastName;
-                contact.Email = updatedContact.Email;
-                await _dataAccess.SaveContactsAsync(contacts);
+                existingContact.FirstName = contact.FirstName;
+                existingContact.LastName = contact.LastName;
+                existingContact.Email = contact.Email;
+                await SaveAllContactsAsync(contacts);
             }
         }
 
@@ -55,9 +53,14 @@ namespace my.services.contactinfo.Infrastructure.Respositories
             if (contact != null)
             {
                 contacts.Remove(contact);
-                await _dataAccess.SaveContactsAsync(contacts);
+                await SaveAllContactsAsync(contacts);
             }
         }
-    }
 
+        private async Task SaveAllContactsAsync(List<Contact> contacts)
+        {
+            var jsonData = JsonConvert.SerializeObject(contacts, Formatting.Indented);
+            await File.WriteAllTextAsync(_filePath, jsonData);
+        }
+    }
 }

@@ -92,16 +92,11 @@ namespace my.services.contactinfo.Web
                                                                     .AllowAnyHeader()));
             // 8
             services.AddControllers();
-            // Infrastructure
+            services.AddScoped<ContactService>();
             services.AddSingleton<IContactRepository, ContactRepository>();
-            services.AddSingleton<ContactService>();
-
-            // Application
-            services.AddTransient<ContactService>();
-
-            // Domain
-            services.AddFluentValidationAutoValidation();
             services.AddValidatorsFromAssemblyContaining<ContactValidator>();
+            services.AddFluentValidationAutoValidation();
+            
             services.AddSingleton<IConfiguration>(Configuration);
             // 9
             services.AddSwaggerGen(c =>
