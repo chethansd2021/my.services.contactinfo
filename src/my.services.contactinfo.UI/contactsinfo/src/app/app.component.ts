@@ -25,8 +25,7 @@ export class AppComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    // Fetch contacts from API
+  ngOnInit() {    
     this.loadContacts();
   }
 

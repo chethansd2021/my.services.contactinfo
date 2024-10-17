@@ -10,10 +10,10 @@
       <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
         <div class="row mb-3">
           <div class="col">
-            <input formControlName="firstname" type="text" class="form-control" placeholder="Firstname">
+            <input formControlName="firstName" type="text" class="form-control" placeholder="Firstname">
           </div>
           <div class="col">
-            <input formControlName="lastname" type="text" class="form-control" placeholder="Lastname">
+            <input formControlName="lastName" type="text" class="form-control" placeholder="Lastname">
           </div>
           <div class="col">
             <input formControlName="email" type="email" class="form-control" placeholder="Email">
@@ -44,8 +44,8 @@
     <tbody>
       <tr *ngFor="let contact of contacts">
         <td>{{ contact.id }}</td>
-        <td>{{ contact.firstname }}</td>
-        <td>{{ contact.lastname }}</td>
+        <td>{{ contact.firstName }}</td>
+        <td>{{ contact.lastName }}</td>
         <td>{{ contact.email }}</td>
         <td>
           <button class="btn btn-info" (click)="onEdit(contact)">Edit</button>
