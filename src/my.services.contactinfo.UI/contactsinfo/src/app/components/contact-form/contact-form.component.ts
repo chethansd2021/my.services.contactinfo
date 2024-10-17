@@ -1,53 +1,40 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ContactService } from '../../services/contact.service';
 import { Contact } from '../../models/contact.model';
-import { ActivatedRoute, Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-contact-form',
   templateUrl: './contact-form.component.html',
+  styleUrls: ['./contact-form.component.scss']
 })
 export class ContactFormComponent implements OnInit {
+  @Input() contact?: Contact;
+  @Output() save = new EventEmitter<Contact>();
   contactForm: FormGroup;
-  contactId: number | null = null;
 
-  constructor(
-    private fb: FormBuilder,
-    private contactService: ContactService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {
+  constructor(private fb: FormBuilder) {
     this.contactForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]]      
     });
   }
 
-  ngOnInit(): void {
-    this.contactId = this.route.snapshot.params['id'];
-    if (this.contactId) {
-      this.contactService.getContactById(this.contactId).subscribe((contact) => {
-        this.contactForm.patchValue(contact);
-      });
+  ngOnInit() {
+    if (this.contact) {
+      this.contactForm.patchValue(this.contact);
     }
   }
 
-  onSubmit(): void {
+  onSubmit() {
     if (this.contactForm.valid) {
-      const contact: Contact = this.contactForm.value;
-      if (this.contactId) {
-        contact.id = this.contactId;
-        this.contactService.updateContact(contact).subscribe(() => {
-          this.router.navigate(['/contacts']);
-        });
-      } else {
-        this.contactService.addContact(contact).subscribe(() => {
-          this.router.navigate(['/contacts']);
-        });
-      }
+      this.save.emit(this.contactForm.value);
+      this.resetForm(); // Reset form after save
     }
+  }
+
+  resetForm() {
+    this.contactForm.reset(); // Clear the form fields
   }
 }
