@@ -1,28 +1,36 @@
-<div class="container">
-    <h2 class="mt-4">Contact List</h2>
-    <button class="btn btn-primary mb-3" (click)="onAddContact()">Add Contact</button>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-            <th>Id</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let contact of contacts">
-            <td>{{ contact.id }}</td>
-            <td>{{ contact.firstName }}</td>
-            <td>{{ contact.lastName }}</td>
-            <td>{{ contact.email }}</td>
-          <td>
-            <button class="btn btn-warning" (click)="onEditContact(contact.id)">Edit</button>
-            <button class="btn btn-danger" (click)="onDeleteContact(contact.id)">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+<div class="contact-list">
+  <h2>Contact List</h2>
+  <button class="btn btn-success" (click)="onAddNew()">Add New Contact</button>
+
+  <table class="table mt-4">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>        
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let contact of contacts">
+        <td>{{ contact.id }}</td>
+        <td>{{ contact.firstName }}</td>
+        <td>{{ contact.lastName }}</td>
+        <td>{{ contact.email }}</td>        
+        <td>
+          <button (click)="onEdit(contact)" class="btn btn-secondary">Edit</button>
+          <button (click)="onDelete(contact.id)" class="btn btn-danger">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Conditionally display the form only when editing or adding a new contact -->
+  <div *ngIf="isFormVisible" class="mt-4">
+    <app-contact-form
+      [contact]="selectedContact"
+      (save)="onSave($event)"
+    ></app-contact-form>
   </div>
-  
+</div>
