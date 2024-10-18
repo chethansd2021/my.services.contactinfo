@@ -1,0 +1,14 @@
+.table {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  
+  .float-btn {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+  }
+  
+  .full-width {
+    width: 100%;
+  }

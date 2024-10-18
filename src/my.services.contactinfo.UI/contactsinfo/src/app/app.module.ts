@@ -1,15 +1,22 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
-
 import { ContactListComponent } from './components/contact-list/contact-list.component';
 import { ContactFormComponent } from './components/contact-form/contact-form.component';
-import { AppRoutingModule } from './app-routing/app-routing.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+// Angular Material Modules
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { AppRoutingModule } from './app-routing/app-routing.module';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -19,10 +26,17 @@ import { AppRoutingModule } from './app-routing/app-routing.module';
   ],
   imports: [
     BrowserModule,
-    HttpClientModule,           // For making HTTP calls to the backend
-    ReactiveFormsModule,        // For handling reactive forms in Angular
-    AppRoutingModule,           // For routing between components
-    RouterModule
+    HttpClientModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatTableModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatSnackBarModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
