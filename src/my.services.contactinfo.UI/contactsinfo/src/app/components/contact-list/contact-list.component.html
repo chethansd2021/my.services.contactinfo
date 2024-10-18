@@ -1,36 +1,40 @@
-<div class="contact-list">
+<div class="container mt-4">
   <h2>Contact List</h2>
-  <button class="btn btn-success" (click)="onAddNew()">Add New Contact</button>
 
-  <table class="table mt-4">
-    <thead>
-      <tr>
-        <th>Id</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email</th>        
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let contact of contacts">
-        <td>{{ contact.id }}</td>
-        <td>{{ contact.firstName }}</td>
-        <td>{{ contact.lastName }}</td>
-        <td>{{ contact.email }}</td>        
-        <td>
-          <button (click)="onEdit(contact)" class="btn btn-secondary">Edit</button>
-          <button (click)="onDelete(contact.id)" class="btn btn-danger">Delete</button>
-        </td>
-      </tr>
-    </tbody>
+  <table mat-table [dataSource]="contacts" class="mat-elevation-z8">
+    <!-- First Name Column -->
+    <ng-container matColumnDef="firstName">
+      <th mat-header-cell *matHeaderCellDef> First Name </th>
+      <td mat-cell *matCellDef="let contact"> {{contact.firstName}} </td>
+    </ng-container>
+
+    <!-- Last Name Column -->
+    <ng-container matColumnDef="lastName">
+      <th mat-header-cell *matHeaderCellDef> Last Name </th>
+      <td mat-cell *matCellDef="let contact"> {{contact.lastName}} </td>
+    </ng-container>
+
+    <!-- Email Column -->
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef> Email </th>
+      <td mat-cell *matCellDef="let contact"> {{contact.email}} </td>
+    </ng-container>
+
+    <!-- Actions Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let contact">
+        <button mat-button color="primary" (click)="editContact(contact)">Edit</button>
+        <button mat-button color="warn" (click)="deleteContact(contact.id)">Delete</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 
-  <!-- Conditionally display the form only when editing or adding a new contact -->
-  <div *ngIf="isFormVisible" class="mt-4">
-    <app-contact-form
-      [contact]="selectedContact"
-      (save)="onSave($event)"
-    ></app-contact-form>
-  </div>
+  <!-- Floating Action Button to Add Contact -->
+  <button mat-fab color="primary" class="float-btn" (click)="onAddContact()">
+    <mat-icon>add</mat-icon>
+  </button>
 </div>
